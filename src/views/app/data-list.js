@@ -58,7 +58,7 @@ const DataListPages = ({ match }) => {
     async function fetchData() {
       axios
         .get(
-          `https://sandbox.paguelofacil.com/PFManagementServices/api/v1/MerchantTransactions?Limit=${selectedPageSize}&sort=${selectedOrderOption.column}`,
+          `https://sandbox.paguelofacil.com/PFManagementServices/api/v1/MerchantTransactions?sort=${selectedOrderOption.column}`,
           {
             headers: {
               Authorization:
@@ -70,14 +70,16 @@ const DataListPages = ({ match }) => {
             return res.data.data;
         })
         .then((data) => {
-          setTotalPage(Math.round(data.length/5));
+          setTotalPage(Math.ceil(data.length/selectedPageSize));
+          setTotalItemCount(data.length);
+          const j = data.slice((currentPage-1)*selectedPageSize, currentPage*selectedPageSize )
+          
           setItems(
-            data.map((x) => {
+            j.map((x) => {
               return { ...x };
             })
           );
           setSelectedItems([]);
-          setTotalItemCount(data.length);
           setIsLoaded(true);
         });
     }
